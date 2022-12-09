@@ -7,6 +7,7 @@ interface IBalanceFormProps {
     name: string;
     modifyBalance: (key: string, balance: IBalance, method: string) => void;
     balanceId?: string | null;
+    amount?: number | null;
     method: string;
 }
 const props = defineProps<IBalanceFormProps>();

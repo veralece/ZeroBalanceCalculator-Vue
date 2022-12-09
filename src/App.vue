@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { IBalanceState, IBalance, IBalanceError } from './interfaces/ZeroBalanceNamespace';
+import { IBalanceState, IBalanceError, IBalance } from './interfaces/ZeroBalanceNamespace';
 import BalanceForm from './components/BalanceForm.vue';
 import Balances from './components/Balances.vue';
 const BALANCE_TYPES = {
@@ -9,7 +9,7 @@ const BALANCE_TYPES = {
   FUNDS: 'funds',
   SAVINGS: 'savings'
 }
-const BALANCE_METHOD = {
+const BALANCE_METHODS = {
   ADD: 'add',
   UPDATE: 'update',
   DELETE: 'del'
@@ -27,7 +27,7 @@ function modifyBalance(key: string, balance: IBalance, method: string): void {
   error.message = null;
 
   if (balance.amount === null || balance.amount < 1) {
-    error.message = "Balance is not a valid amount.";
+    error.message = "Balance is not a valid amount. It should be at least greater than 1.";
     return;
   }
 
@@ -37,13 +37,14 @@ function modifyBalance(key: string, balance: IBalance, method: string): void {
   }
 
   switch (method) {
-    case BALANCE_METHOD.ADD:
+    case BALANCE_METHODS.ADD:
       balanceState[key].push(balance);
       break;
-    case BALANCE_METHOD.UPDATE:
+    case BALANCE_METHODS.UPDATE:
+      console.log(balance);
       balanceState[key][balanceState[key].findIndex(b => b.balanceId = balance.balanceId)] = balance;
       break;
-    case BALANCE_METHOD.DELETE:
+    case BALANCE_METHODS.DELETE:
       balanceState[key] = balanceState[key].filter(b => b.balanceId !== balance.balanceId);
       break;
     default:
@@ -68,15 +69,13 @@ function modifyBalance(key: string, balance: IBalance, method: string): void {
           so that all of your money is allocated and accounted.
         </p>
       </header>
-      <template v-for="balanceType in BALANCE_TYPES" :key="balanceType">
-        <BalanceForm :name="balanceType" :modify-balance="modifyBalance" :method="BALANCE_METHOD.ADD">
-        </BalanceForm>
-      </template>
+      <BalanceForm v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_form`" :name="balanceType"
+        :modify-balance="modifyBalance" :method="BALANCE_METHODS.ADD" />
+
       <p v-if="(error.message !== null)">{{ error.message }}</p>
-      <template v-for="balanceType in BALANCE_TYPES">
-        <Balances :name="balanceType" :modify-balance="modifyBalance" :balances="balanceState[balanceType]">
-        </Balances>
-      </template>
+
+      <Balances v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_balances`" :balance-type="balanceType"
+        :modify-balance="modifyBalance" :balances="balanceState[balanceType]" :methods="BALANCE_METHODS" />
     </article>
   </main>
 </template>

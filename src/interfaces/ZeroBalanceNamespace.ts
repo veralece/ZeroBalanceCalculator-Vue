@@ -3,11 +3,10 @@ export interface IBalance {
     name: string;
     amount: number | null;
 }
-
 export interface IBalanceState {
     [key: string]: IBalance[];
 }
 
-export interface IBalanceError { 
+export interface IBalanceError {
     message: string | null;
 }
