@@ -18,10 +18,12 @@ const props = defineProps<IBalancesProps>();
 const balanceTypeName = computed(() => {
     return `${props.balanceType.toUpperCase()[0]}${props.balanceType.substring(1, props.balanceType.length)}`
 });
-
+const hasBalances = computed(() => {
+    return props.balances.length > 0;
+});
 </script>
 <template>
-    <section>
+    <section :hidden="!hasBalances">
         <h1>{{ balanceTypeName }}</h1>
         <BalanceView v-for="balance in props.balances" :modify-balance="props.modifyBalance"
             :balance-type="props.balanceType" :methods="props.methods" :name="balance.name" :amount="balance.amount"

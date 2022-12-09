@@ -69,8 +69,11 @@ function modifyBalance(key: string, balance: IBalance, method: string): void {
           so that all of your money is allocated and accounted.
         </p>
       </header>
-      <BalanceForm v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_form`" :name="balanceType"
-        :modify-balance="modifyBalance" :method="BALANCE_METHODS.ADD" />
+      <section id="balance_forms" class="grid">
+        <h2>Enter your balances</h2>
+        <BalanceForm v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_form`" :balance-type="balanceType"
+          :modify-balance="modifyBalance" :method="BALANCE_METHODS.ADD" />
+      </section>
 
       <p v-if="(error.message !== null)">{{ error.message }}</p>
 
@@ -79,7 +82,3 @@ function modifyBalance(key: string, balance: IBalance, method: string): void {
     </article>
   </main>
 </template>
-
-<style scoped>
-
-</style>

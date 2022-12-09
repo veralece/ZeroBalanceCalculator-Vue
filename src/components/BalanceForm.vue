@@ -1,32 +1,40 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 import uuidv4 from '../hooks/uuid';
-import { IBalance } from '../interfaces/ZeroBalanceNamespace';
-
+import { IBalanceForm, IBalance } from '../interfaces/ZeroBalanceNamespace';
+const initialState: IBalanceForm = {
+    name: '',
+    amount: null
+}
 interface IBalanceFormProps {
-    name: string;
+    balanceType: string;
     modifyBalance: (key: string, balance: IBalance, method: string) => void;
-    balanceId?: string | null;
     amount?: number | null;
     method: string;
 }
 const props = defineProps<IBalanceFormProps>();
 
-const state: IBalance = reactive({
-    balanceId: props.balanceId ? uuidv4() : props.balanceId,
-    name: '',
-    amount: null
+const formState: IBalanceForm = reactive({ ...initialState });
+
+const displayLabel = computed(() => {
+    return `${props.balanceType.toUpperCase()[0]}${props.balanceType.substring(1, props.balanceType.length)}`
 });
 
+function handleSubmit() {
+    props.modifyBalance(props.balanceType, { ...formState, balanceId: uuidv4() }, props.method);
+    formState.amount = initialState.amount;
+    formState.name = initialState.name;
+}
 </script>
 <template>
-    <form @submit.prevent="props.modifyBalance(props.name, state, props.method)">
-        <label :for="`${props.name}-name`">{{ props.name }} name</label>
-        <input v-model="state.name" :id="`${props.name}-name`" :placeholder="`Enter ${props.name} name`" type="text" />
+    <form class="grid balance-form card" @submit.prevent="handleSubmit">
+        <label :for="`${props.balanceType}-name`">{{ displayLabel }} name</label>
+        <input v-model="formState.name" :id="`${props.balanceType}-name`"
+            :placeholder="`Enter ${props.balanceType} name`" type="text" />
 
-        <label :for="`${props.name}-amount`"></label>
-        <input v-model="state.amount" :id="`${props.name}-amount`" :placeholder="`Enter ${props.name} amount`"
-            type="number" />
+        <label :for="`${props.balanceType}-amount`"></label>
+        <input v-model="formState.amount" :id="`${props.balanceType}-amount`"
+            :placeholder="`Enter ${props.balanceType} amount`" type="number" />
         <button type="submit">Submit</button>
     </form>
 </template>
