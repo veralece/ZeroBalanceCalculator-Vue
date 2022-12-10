@@ -28,13 +28,17 @@ function handleSubmit() {
 </script>
 <template>
     <form class="grid balance-form card" @submit.prevent="handleSubmit">
-        <label :for="`${props.balanceType}-name`">{{ displayLabel }} name</label>
-        <input v-model="formState.name" :id="`${props.balanceType}-name`"
-            :placeholder="`Enter ${props.balanceType} name`" type="text" />
+        <span class="form-input">
+            <input v-model="formState.name" :id="`${props.balanceType}-name`" :placeholder="`${displayLabel} name`"
+                type="text" />
+            <label :for="`${props.balanceType}-name`">{{ displayLabel }} name</label>
+        </span>
 
-        <label :for="`${props.balanceType}-amount`">{{ displayLabel }} amount</label>
-        <input v-model="formState.amount" :id="`${props.balanceType}-amount`"
-            :placeholder="`Enter ${props.balanceType} amount`" type="number" />
+        <span class="form-input">
+            <input v-model="formState.amount" :id="`${props.balanceType}-amount`"
+                :placeholder="`${displayLabel} amount`" type="number" />
+            <label :for="`${props.balanceType}-amount`">{{ displayLabel }} amount</label>
+        </span>
         <button type="submit">Submit</button>
     </form>
 </template>

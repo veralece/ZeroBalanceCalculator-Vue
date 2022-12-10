@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { IBalance } from '../interfaces/ZeroBalanceNamespace';
 interface IBalanceProps {
     balanceType: string;
@@ -22,6 +22,9 @@ const viewState = reactive<IBalance>({
     amount: props.amount
 });
 
+const displayLabel = computed(() => {
+    return `${props.balanceType.toUpperCase()[0]}${props.balanceType.substring(1, props.balanceType.length)}`
+});
 function toggleEditMode() {
     editMode.value = !editMode.value;
 }
@@ -42,14 +45,18 @@ function handleDelete() {
         <button @click="handleDelete">Delete</button>
     </section>
 
-    <form v-if="editMode" @submit.prevent="handleSubmit">
-        <label :for="`${props.name}-name`">{{ props.name }} name</label>
-        <input v-model="viewState.name" :id="`${props.name}-name`" :placeholder="`Enter ${props.balanceType} name`"
-            type="text" />
+    <form class="grid balance-form card" v-if="editMode" @submit.prevent="handleSubmit">
+        <span class="form-input">
+            <input v-model="viewState.name" :id="`${props.name}-name`" :placeholder="`${displayLabel} name`"
+                type="text" />
+            <label :for="`${props.name}-name`">{{ displayLabel }} name</label>
+        </span>
 
-        <label :for="`${props.name}-amount`"></label>
-        <input v-model="viewState.amount" :id="`${props.name}-amount`" :placeholder="`Enter ${props.balanceType} amount`"
-            type="number" />
+        <span class="form-input">
+            <input v-model="viewState.amount" :id="`${props.name}-amount`" :placeholder="`${displayLabel} amount`"
+                type="number" />
+            <label :for="`${props.name}-amount`">{{ displayLabel }} amount</label>
+        </span>
         <button type="submit">Submit</button>
     </form>
 </template>
