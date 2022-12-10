@@ -63,14 +63,14 @@ function modifyBalance(key: string, balance: IBalance, method: string): void {
   <main>
     <article>
       <header>
-        <h1>Zero Balance Calculator</h1>
+        <h1 class="center-text">Zero Balance Calculator</h1>
         <p>
           The purpose of this is to zero out your income by inputting your monthly income, expenses, funds, and savings
           so that all of your money is allocated and accounted.
         </p>
       </header>
       <section id="balance_forms" class="grid">
-        <h2>Enter your balances</h2>
+        <h2 class="center-text">Enter your balances</h2>
         <BalanceForm v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_form`" :balance-type="balanceType"
           :modify-balance="modifyBalance" :method="BALANCE_METHODS.ADD" />
       </section>

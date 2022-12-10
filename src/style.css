@@ -6,7 +6,6 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -62,10 +61,15 @@ button:focus-visible {
   border-radius: 8px;
   border: 1px solid lightslategray;
   padding: 2em;
+  box-shadow: 0 0 5px 1px #242424;
 }
 
 .grid {
   display: grid;
+}
+
+.center-text {
+  text-align: center;
 }
 
 .col-2 {
@@ -84,7 +88,6 @@ button:focus-visible {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
 @media (prefers-color-scheme: light) {
@@ -103,7 +106,9 @@ button:focus-visible {
 }
 
 @media screen and (max-width: 425px) {
-  .balance-form {}
+  .balance-form {
+    min-width: 75%;
+  }
 
   #balance_forms {
     justify-items: center;

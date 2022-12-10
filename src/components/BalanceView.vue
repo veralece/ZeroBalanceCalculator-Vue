@@ -32,8 +32,8 @@ function handleSubmit() {
 function handleDelete() {
     props.modifyBalance(props.balanceType, viewState, props.methods.DELETE);
 }
-
 </script>
+
 <template>
     <section v-if="!editMode">
         <h2>{{ props.name }}</h2>

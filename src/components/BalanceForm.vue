@@ -32,7 +32,7 @@ function handleSubmit() {
         <input v-model="formState.name" :id="`${props.balanceType}-name`"
             :placeholder="`Enter ${props.balanceType} name`" type="text" />
 
-        <label :for="`${props.balanceType}-amount`"></label>
+        <label :for="`${props.balanceType}-amount`">{{ displayLabel }} amount</label>
         <input v-model="formState.amount" :id="`${props.balanceType}-amount`"
             :placeholder="`Enter ${props.balanceType} amount`" type="number" />
         <button type="submit">Submit</button>
