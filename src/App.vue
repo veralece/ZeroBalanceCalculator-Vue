@@ -1,51 +1,77 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { IBalanceState, IBalanceError, IBalance } from './interfaces/ZeroBalanceNamespace';
+import { IBalancePropertyError, IBalanceState, IBalanceError, IBalance, BALANCE_METHODS, BALANCE_TYPES, INITIAL_BALANCE_ERROR_STATE, INITIAL_BALANCE_STATE, IBalanceForm, BALANCE_TYPE_PROPERTY } from './ZeroBalanceNamespace';
 import BalanceForm from './components/BalanceForm.vue';
 import Balances from './components/Balances.vue';
-const BALANCE_TYPES = {
-  INCOME: 'income',
-  EXPENSES: 'expenses',
-  FUNDS: 'funds',
-  SAVINGS: 'savings'
-}
-const BALANCE_METHODS = {
-  ADD: 'add',
-  UPDATE: 'update',
-  DELETE: 'del'
-}
-const balanceState: IBalanceState = reactive({
-  income: [],
-  expenses: [],
-  funds: [],
-  savings: []
-});
+import CreateUniqueID from './hooks/uuid';
 
-const error = reactive<IBalanceError>({ message: null });
+const balanceState: IBalanceState = reactive({ ...INITIAL_BALANCE_STATE });
 
-function modifyBalance(key: string, balance: IBalance, method: string): void {
-  error.message = null;
+const errorState = reactive<IBalanceError>({ ...INITIAL_BALANCE_ERROR_STATE });
 
-  if (balance.amount === null || balance.amount < 1) {
-    error.message = "Balance is not a valid amount. It should be at least greater than 1.";
-    return;
-  }
+function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | null, balance: IBalance | null): void {
+  errorState.key = INITIAL_BALANCE_ERROR_STATE.key;
+  errorState.message = INITIAL_BALANCE_ERROR_STATE.message;
+  errorState.offendingBalance = INITIAL_BALANCE_ERROR_STATE.offendingBalance;
+  errorState.offendingForms = INITIAL_BALANCE_ERROR_STATE.offendingForms;
 
-  if (balance.name === null || balance.name === "") {
-    error.message = "Balance name is invalid."
-    return;
+  const checkValidBalance = (balanceToVerify: IBalance | IBalanceForm): boolean => {
+    let validSubmission = true;
+    const offendingForms: IBalancePropertyError[] = [];
+
+    if (balanceToVerify.amount === null || balanceToVerify.amount < 1) {
+      const errorMessage = "Balance is not a valid amount. It should be at least greater than 1.";
+      if (balanceForm) {
+        offendingForms.push({ propertyErrorMessage: errorMessage, balancePropertyType: BALANCE_TYPE_PROPERTY.AMOUNT });
+      }
+      else if (balance) {
+        errorState.offendingBalance = { balanceId: balance.balanceId };
+        errorState.message = errorMessage;
+      }
+      validSubmission = false;
+    }
+
+    if (balanceToVerify.name === null || balanceToVerify.name === "") {
+      const errorMessage = "Balance name is invalid.";
+      if (balanceForm) {
+        offendingForms.push({ propertyErrorMessage: errorMessage, balancePropertyType: BALANCE_TYPE_PROPERTY.NAME });
+      }
+      else if (balance) {
+        errorState.offendingBalance = { balanceId: balance.balanceId };
+        errorState.message = errorMessage;
+      }
+      validSubmission = false;
+    }
+    if (!validSubmission) {
+      errorState.key = key;
+
+      if (offendingForms.length > 0) {
+
+        errorState.offendingForms = offendingForms;
+      }
+      else {
+      }
+    }
+
+    return validSubmission;
   }
 
   switch (method) {
     case BALANCE_METHODS.ADD:
-      balanceState[key].push(balance);
+      const validAddition = balanceForm && checkValidBalance(balanceForm);
+      validAddition && balanceState[key].push({ ...balanceForm, balanceId: CreateUniqueID() });
       break;
+
     case BALANCE_METHODS.UPDATE:
-      console.log(balance);
-      balanceState[key][balanceState[key].findIndex(b => b.balanceId = balance.balanceId)] = balance;
+      const validUpdate = balance && checkValidBalance(balance);
+      if (validUpdate)
+        balanceState[key][balanceState[key].findIndex(b => b.balanceId = balance.balanceId)] = balance;
       break;
+
     case BALANCE_METHODS.DELETE:
-      balanceState[key] = balanceState[key].filter(b => b.balanceId !== balance.balanceId);
+      if (balance) {
+        balanceState[key] = balanceState[key].filter(b => b.balanceId !== balance.balanceId);
+      }
       break;
     default:
       break;
@@ -72,10 +98,8 @@ function modifyBalance(key: string, balance: IBalance, method: string): void {
       <section id="balance_forms" class="grid">
         <h2 class="center-text">Enter your balances</h2>
         <BalanceForm v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_form`" :balance-type="balanceType"
-          :modify-balance="modifyBalance" :method="BALANCE_METHODS.ADD" />
+          :modify-balance="modifyBalance" :method="BALANCE_METHODS.ADD" :error="errorState" />
       </section>
-
-      <p v-if="(error.message !== null)">{{ error.message }}</p>
 
       <Balances v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_balances`" :balance-type="balanceType"
         :modify-balance="modifyBalance" :balances="balanceState[balanceType]" :methods="BALANCE_METHODS" />

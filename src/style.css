@@ -58,6 +58,71 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.balance-view {
+  grid-template-columns: 2em repeat(2, 1fr);
+  border: 1px solid #242424;
+  padding-left: .25em;
+  column-gap: .5em;
+  position: relative;
+  overflow: hidden;
+  height: 80px;
+}
+
+.balance-view h2,
+.balance-view p {
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.balance-view .editable {
+  align-items: center;
+}
+
+.balance-view:has(.editable) {
+  grid-template-columns: 2em 1fr auto;
+}
+
+.balance-view input[type=checkbox] {
+  align-self: center;
+  justify-self: left;
+}
+
+.balance-view label.checkbox.delete {
+  border-left: 1px solid #999;
+  column-gap: 0;
+  row-gap: 0;
+  place-items: center;
+  place-content: center;
+}
+
+.balance-view label.checkbox.delete span::before {
+  content: '.';
+  padding: 0 .25em;
+  font-size: 1.25em;
+  color: #242424;
+  font-weight: bolder;
+}
+
+.balance-view input.checkbox.delete {
+  display: none;
+}
+
+.balance-view .delete-button {
+  position: absolute;
+  width: 75%;
+  height: 100%;
+  background-color: #f33;
+  color: white;
+  border-radius: 0;
+  transform: translateX(-120%);
+  transition: all 150ms;
+}
+
+.balance-view input.checkbox.delete:checked+.delete-button {
+  transform: translateX(0%);
+}
+
 .card {
   border-radius: 8px;
   border: 1px solid #f0f0f0;
@@ -93,6 +158,11 @@ button:focus-visible {
 
 .balance-form {
   row-gap: 1em;
+}
+
+.error-message {
+  font-size: .75em;
+  color: #f33;
 }
 
 .form-input {
@@ -138,7 +208,7 @@ button:focus-visible {
 
 @media screen and (max-width: 425px) {
   .balance-form {
-    min-width: 75%;
+    width: 85%;
   }
 
   #balance_forms {

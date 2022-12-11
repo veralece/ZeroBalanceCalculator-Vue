@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { IBalance } from '../interfaces/ZeroBalanceNamespace';
+import { IBalance } from '../ZeroBalanceNamespace';
 import BalanceView from './BalanceView.vue';
 interface IBalancesProps {
     balanceType: string;
@@ -10,7 +10,7 @@ interface IBalancesProps {
         UPDATE: string,
         DELETE: string
     };
-    modifyBalance: (key: string, balance: IBalance, method: string) => void;
+    modifyBalance: (key: string, method: string, balanceForm: null, balance: IBalance) => void;
 }
 
 const props = defineProps<IBalancesProps>();
@@ -23,9 +23,9 @@ const hasBalances = computed(() => {
 });
 </script>
 <template>
-    <section :hidden="!hasBalances">
-        <h1>{{ balanceTypeName }}</h1>
-        <BalanceView v-for="balance in props.balances" :modify-balance="props.modifyBalance"
+    <section class="balance-viewer grid">
+        <h1 :hidden="!hasBalances">{{ balanceTypeName }}</h1>
+        <BalanceView :hidden="!hasBalances" v-for="balance in props.balances" :modify-balance="props.modifyBalance"
             :balance-type="props.balanceType" :methods="props.methods" :name="balance.name" :amount="balance.amount"
             :balance-id="balance.balanceId" :key="balance.balanceId" />
     </section>

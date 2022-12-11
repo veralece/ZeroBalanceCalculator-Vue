@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import { IBalance } from '../interfaces/ZeroBalanceNamespace';
+import { IBalance } from '../ZeroBalanceNamespace';
 interface IBalanceProps {
     balanceType: string;
     balanceId: string;
-    name: string;
+    name: string | null;
     amount: number | null;
-    modifyBalance: (key: string, balance: IBalance, method: string) => void;
+    modifyBalance: (key: string, method: string, balanceForm: null, balance: IBalance) => void;
     methods: {
         ADD: string,
         UPDATE: string,
@@ -16,6 +16,7 @@ interface IBalanceProps {
 
 const props = defineProps<IBalanceProps>();
 const editMode = ref(false);
+const deleteMode = ref(false);
 const viewState = reactive<IBalance>({
     balanceId: props.balanceId,
     name: props.name,
@@ -28,35 +29,57 @@ const displayLabel = computed(() => {
 function toggleEditMode() {
     editMode.value = !editMode.value;
 }
-function handleSubmit() {
-    toggleEditMode();
-    props.modifyBalance(props.balanceType, viewState, props.methods.UPDATE);
+
+function toggleDeleteButton() {
+    deleteMode.value = !deleteMode.value;
+}
+function handleBlur() {
+    props.modifyBalance(props.balanceType, props.methods.UPDATE, null, viewState);
+}
+function handleChange(e: Event) {
+    const event: HTMLInputElement = e.target as HTMLInputElement;
+    const newBalanceItem: IBalance = { ...viewState, [event.name]: event.value }
+    viewState.amount = newBalanceItem.amount;
+    viewState.name = newBalanceItem.name;
 }
 function handleDelete() {
-    props.modifyBalance(props.balanceType, viewState, props.methods.DELETE);
+    props.modifyBalance(props.balanceType, props.methods.DELETE, null, viewState);
 }
 </script>
 
 <template>
-    <section v-if="!editMode">
-        <h2>{{ props.name }}</h2>
-        <p>{{ props.amount }}</p>
-        <button @click="toggleEditMode">Edit</button>
-        <button @click="handleDelete">Delete</button>
+    <section class="balance-view grid">
+        <input :id="`${props.name}-toggle-edit-checkbox`" type="checkbox" :checked="editMode"
+            @change="toggleEditMode" />
+
+        <template v-if="!editMode">
+            <h2>{{ props.name }}</h2>
+            <p>${{ props.amount }}</p>
+        </template>
+
+        <template v-else>
+            <section class="grid editable">
+                <span class="input grid col-2">
+                    <label :for="`${props.name}-name`">Name</label>
+                    <input v-model="viewState.name" @change="handleChange" @blur="handleBlur" :id="`${props.name}-name`"
+                        name="name" :placeholder="`${displayLabel} name`" type="text" />
+                </span>
+                <span class="input grid col-2">
+                    <label :for="`${props.name}-amount`">Amount</label>
+                    <input v-model="viewState.amount" @change="handleChange" @blur="handleBlur"
+                        :id="`${props.name}-amount`" name="amount" :placeholder="`${displayLabel} amount`"
+                        type="number" />
+                </span>
+            </section>
+            <label class="checkbox delete grid" :for="`${props.name}-toggle-del-checkbox`">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            <input :id="`${props.name}-toggle-del-checkbox`" class="checkbox delete" type="checkbox"
+                :checked="deleteMode" @change="toggleDeleteButton" />
+            <button class="delete-button" @click="handleDelete">Delete</button>
+        </template>
+
     </section>
-
-    <form class="grid balance-form card" v-if="editMode" @submit.prevent="handleSubmit">
-        <span class="form-input">
-            <input v-model="viewState.name" :id="`${props.name}-name`" :placeholder="`${displayLabel} name`"
-                type="text" />
-            <label :for="`${props.name}-name`">{{ displayLabel }} name</label>
-        </span>
-
-        <span class="form-input">
-            <input v-model="viewState.amount" :id="`${props.name}-amount`" :placeholder="`${displayLabel} amount`"
-                type="number" />
-            <label :for="`${props.name}-amount`">{{ displayLabel }} amount</label>
-        </span>
-        <button type="submit">Submit</button>
-    </form>
 </template>
