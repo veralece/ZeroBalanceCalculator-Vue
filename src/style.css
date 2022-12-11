@@ -59,33 +59,38 @@ button:focus-visible {
 }
 
 .balance-view {
-  grid-template-columns: 2em repeat(2, 1fr);
-  border: 1px solid #242424;
-  padding-left: .25em;
-  column-gap: .5em;
+  grid-template-columns: 2em 1fr auto;
+  outline: 1px solid #242424;
+  padding-left: 5px;
+  column-gap: 1em;
   position: relative;
   overflow: hidden;
   height: 80px;
 }
 
 .balance-view h2,
-.balance-view p {
+.balance-view p,
+.balance-view .editable .input {
   font-size: 1em;
-  font-weight: bold;
+  font-weight: 500;
   margin: 0;
+  align-self: center;
+  justify-self: left;
 }
 
 .balance-view .editable {
   align-items: center;
 }
 
-.balance-view:has(.editable) {
-  grid-template-columns: 2em 1fr auto;
+.balance-view .editable .input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #999;
 }
 
-.balance-view input[type=checkbox] {
+.balance-view label.checkbox {
   align-self: center;
-  justify-self: left;
+  justify-self: center;
 }
 
 .balance-view label.checkbox.delete {
@@ -96,15 +101,22 @@ button:focus-visible {
   place-content: center;
 }
 
-.balance-view label.checkbox.delete span::before {
-  content: '.';
-  padding: 0 .25em;
-  font-size: 1.25em;
-  color: #242424;
-  font-weight: bolder;
+.checkbox-svg {
+  height: 32px;
+  width: 32px;
 }
 
-.balance-view input.checkbox.delete {
+label.checkbox:hover {
+  cursor: pointer;
+}
+
+.balance-view label.checkbox.edit {
+  height: 100%;
+  width: 32px;
+  align-items: center;
+}
+
+.balance-view input.checkbox {
   display: none;
 }
 
@@ -119,8 +131,41 @@ button:focus-visible {
   transition: all 150ms;
 }
 
-.balance-view input.checkbox.delete:checked+.delete-button {
+.balance-view input.checkbox.delete:checked~.delete-button {
   transform: translateX(0%);
+}
+
+.balance-view .options-checkbox {
+  width: 10px;
+  height: 82px;
+}
+
+.balance-view input.checkbox.delete~label:active .options-checkbox {
+  transition: all 150ms;
+  background-color: rgba(0, 0, 0, .4);
+}
+
+.checkbox-svg .line {
+  stroke: transparent;
+  transition: all 150ms;
+}
+
+.checkbox-svg .square {
+  fill: #e5e5e5;
+  transition: all 150ms;
+}
+
+.checkbox-svg:active .square {
+  fill: #84B483;
+}
+
+.balance-view input.checkbox:checked+label.checkbox.edit .checkbox-svg .square {
+  fill: #94DC85;
+}
+
+.checkbox-svg:active .line,
+.balance-view input.checkbox:checked+label.checkbox.edit .checkbox-svg .line {
+  stroke: white;
 }
 
 .card {

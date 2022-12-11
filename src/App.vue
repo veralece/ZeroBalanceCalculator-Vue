@@ -46,10 +46,7 @@ function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | 
       errorState.key = key;
 
       if (offendingForms.length > 0) {
-
         errorState.offendingForms = offendingForms;
-      }
-      else {
       }
     }
 
@@ -64,8 +61,10 @@ function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | 
 
     case BALANCE_METHODS.UPDATE:
       const validUpdate = balance && checkValidBalance(balance);
-      if (validUpdate)
-        balanceState[key][balanceState[key].findIndex(b => b.balanceId = balance.balanceId)] = balance;
+      if (validUpdate) {
+        balanceState[key][balanceState[key].findIndex(b => b.balanceId === balance.balanceId)].amount = balance.amount;
+        balanceState[key][balanceState[key].findIndex(b => b.balanceId === balance.balanceId)].name = balance.name;
+      }
       break;
 
     case BALANCE_METHODS.DELETE:
@@ -102,7 +101,7 @@ function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | 
       </section>
 
       <Balances v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_balances`" :balance-type="balanceType"
-        :modify-balance="modifyBalance" :balances="balanceState[balanceType]" :methods="BALANCE_METHODS" />
+        @handle-change="modifyBalance" :balances="balanceState[balanceType]" :methods="BALANCE_METHODS" />
     </article>
   </main>
 </template>

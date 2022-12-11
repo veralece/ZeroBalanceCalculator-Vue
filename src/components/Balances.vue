@@ -10,9 +10,13 @@ interface IBalancesProps {
         UPDATE: string,
         DELETE: string
     };
-    modifyBalance: (key: string, method: string, balanceForm: null, balance: IBalance) => void;
 }
 
+const emit = defineEmits(['handleChange']);
+
+function handleChange(key: string, method: string, balanceForm: null, balance: IBalance) {
+    emit('handleChange', key, method, balanceForm, balance);
+}
 const props = defineProps<IBalancesProps>();
 
 const balanceTypeName = computed(() => {
@@ -25,8 +29,7 @@ const hasBalances = computed(() => {
 <template>
     <section class="balance-viewer grid">
         <h1 :hidden="!hasBalances">{{ balanceTypeName }}</h1>
-        <BalanceView :hidden="!hasBalances" v-for="balance in props.balances" :modify-balance="props.modifyBalance"
-            :balance-type="props.balanceType" :methods="props.methods" :name="balance.name" :amount="balance.amount"
-            :balance-id="balance.balanceId" :key="balance.balanceId" />
+        <BalanceView @handle-change="handleChange" :hidden="!hasBalances" v-for="balance in props.balances" :balance-type="props.balanceType" :methods="props.methods"
+            :name="balance.name" :amount="balance.amount" :balance-id="balance.balanceId" :key="balance.balanceId" />
     </section>
 </template>
