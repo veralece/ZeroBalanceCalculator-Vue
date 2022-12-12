@@ -216,6 +216,7 @@ label.checkbox:hover {
 
 #final_balance::after,
 .balance-total::after {
+  border-bottom: 3px dotted grey;
   content: '';
   position: absolute;
   width: 100%;
@@ -223,7 +224,6 @@ label.checkbox:hover {
   top: 0;
   left: 0;
   z-index: -1;
-  border-bottom: 3px dotted grey;
   transform: translateY(-8px);
 }
 
@@ -349,13 +349,23 @@ label.checkbox:hover {
 }
 
 @media screen and (max-width: 600px) {
-  .balance-form {
-    width: 85%;
-  }
 
   #balance_forms {
-    justify-items: center;
     row-gap: 1em;
+  }
+
+  #final_balance h2,
+  #final_balance p {
+    font-size: 1.15em;
+  }
+
+  #final_balance::after,
+  .balance-total::after {
+    border-bottom: 2px dotted grey;
+  }
+
+  #final_balance::after {
+    transform: translateY(-8px);
   }
 }
 

@@ -123,10 +123,14 @@ function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | 
         <Balances v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_balances`" :balance-type="balanceType"
           @handle-change="modifyBalance" :balances="balanceState[balanceType]" :methods="BALANCE_METHODS" />
         <section id="final_balance" class="flex">
-          <h2>Total</h2>
+          <h2>Net Total</h2>
           <p :class="balanceTotals.negativeBalance ? 'negative-bal' : ''">{{ balanceTotals.amount }}</p>
         </section>
+        <aside><small>Net Total = Incomes - (Expenses + Funds + Savings)</small></aside>
       </section>
     </article>
+    <footer class="center-text">
+      <p>Created by <a href="www.javierpenaloza.info">Javier Penaloza</a> &copy; 2022</p>
+    </footer>
   </main>
 </template>
