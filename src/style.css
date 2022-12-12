@@ -58,9 +58,21 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.balance-viewer h1 {
+  font-size: 2em;
+}
+
+.balance-viewer h3 {
+  font-size: 1.5em;
+}
+
+.balance-viewer h4 {
+  margin: 0;
+}
+
 .balance-view {
-  grid-template-columns: 2em 1fr auto;
-  outline: 1px solid #242424;
+  grid-template-columns: 2em 1fr 2em;
+  outline: 1px solid #999;
   padding-left: 5px;
   column-gap: 1em;
   position: relative;
@@ -68,7 +80,7 @@ button:focus-visible {
   height: 80px;
 }
 
-.balance-view h2,
+.balance-view h4,
 .balance-view p,
 .balance-view .editable .input {
   font-size: 1em;
@@ -94,11 +106,19 @@ button:focus-visible {
 }
 
 .balance-view label.checkbox.delete {
-  border-left: 1px solid #999;
+  border-left: 1px solid #555;
   column-gap: 0;
   row-gap: 0;
   place-items: center;
   place-content: center;
+  box-shadow: 0px 0 5px -1px #000044;
+  width: 100%;
+  transition: all 150ms;
+}
+
+.balance-view label.checkbox.delete:active {
+  transition: all 150ms;
+  box-shadow: 0px 0 5px -1px #101044 inset;
 }
 
 .checkbox-svg {
@@ -111,8 +131,8 @@ label.checkbox:hover {
 }
 
 .balance-view label.checkbox.edit {
-  height: 100%;
-  width: 32px;
+  height: 32px;
+  width: 100%;
   align-items: center;
 }
 
@@ -122,9 +142,10 @@ label.checkbox:hover {
 
 .balance-view .delete-button {
   position: absolute;
+  box-shadow: 0 0 10px -2px black;
   width: 75%;
   height: 100%;
-  background-color: #f33;
+  background-color: #f11;
   color: white;
   border-radius: 0;
   transform: translateX(-120%);
@@ -132,17 +153,12 @@ label.checkbox:hover {
 }
 
 .balance-view input.checkbox.delete:checked~.delete-button {
-  transform: translateX(0%);
+  transform: translateX(-10%);
 }
 
 .balance-view .options-checkbox {
-  width: 10px;
+  width: 100%;
   height: 82px;
-}
-
-.balance-view input.checkbox.delete~label:active .options-checkbox {
-  transition: all 150ms;
-  background-color: rgba(0, 0, 0, .4);
 }
 
 .checkbox-svg .line {
@@ -168,15 +184,70 @@ label.checkbox:hover {
   stroke: white;
 }
 
+.negative-bal {
+  color: #f11;
+}
+
+.balances {
+  box-shadow: -2px 0px 5px -2px #555, 2px 0px 5px -2px #555;
+}
+
+.balance-total,
+#final_balance {
+  position: relative;
+  justify-content: space-between;
+}
+
+.balance-total h4,
+.balance-total p,
+#final_balance h2,
+#final_balance p {
+  font-size: 1.15em;
+  margin-top: 1em;
+  margin-bottom: 0;
+  background: white;
+}
+
+#final_balance h2,
+#final_balance p {
+  font-size: 1.75em;
+  margin-top: 1em;
+}
+
+#final_balance::after,
+.balance-total::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  border-bottom: 3px dotted grey;
+  transform: translateY(-8px);
+}
+
+#final_balance::after {
+  transform: translateY(-3px);
+}
+
+.circle {
+  fill: grey;
+}
+
 .card {
   border-radius: 8px;
   border: 1px solid #f0f0f0;
-  padding: 2em;
   box-shadow: 0 2px 10px -5px var(--shadow-color);
+  padding: 2em;
 }
 
 .grid {
   display: grid;
+}
+
+.flex {
+  display: flex;
 }
 
 .center-text {
@@ -207,13 +278,21 @@ label.checkbox:hover {
 
 .error-message {
   font-size: .75em;
+  color: transparent;
+  transition: all 150ms;
+}
+
+.error-message.display {
   color: #f33;
+  transform: translateY(3rem);
 }
 
 .form-input {
+  transition: all 150ms;
   position: relative;
   width: 100%;
   height: 3em;
+  margin-bottom: 2rem;
 }
 
 .form-input label {
@@ -251,7 +330,25 @@ label.checkbox:hover {
   border-bottom: 3px solid #999;
 }
 
-@media screen and (max-width: 425px) {
+#balances_container,
+#final_balance {
+  width: 100%;
+  margin: 0 auto;
+}
+
+#balances_container {
+  width: calc(100% - 4rem);
+  margin-top: 2em;
+  max-width: 600px;
+  justify-self: center;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 10px -5px var(--shadow-color);
+  padding: 2em;
+  row-gap: 1em;
+}
+
+@media screen and (max-width: 600px) {
   .balance-form {
     width: 85%;
   }
@@ -260,4 +357,29 @@ label.checkbox:hover {
     justify-items: center;
     row-gap: 1em;
   }
+}
+
+@media screen and (min-width: 601px) and (max-width: 1199px) {
+  #balance_forms {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 1em;
+    column-gap: 1em;
+  }
+
+  #balance_forms h2:first-child {
+    grid-area: 1 / span 2;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  #balance_forms {
+    grid-template-columns: repeat(4, 1fr);
+    row-gap: 1em;
+    column-gap: 1em;
+  }
+
+  #balance_forms h2:first-child {
+    grid-area: 1 / span 4;
+  }
+
 }

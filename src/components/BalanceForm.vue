@@ -18,14 +18,14 @@ const props = defineProps<IBalanceFormProps>();
 const formState: IBalanceForm = reactive({ ...initialState });
 
 const displayLabel = computed(() => {
-    return `${props.balanceType.toUpperCase()[0]}${props.balanceType.substring(1, props.balanceType.length)}`
+    return `${props.balanceType.charAt(0).toUpperCase()}${props.balanceType.slice(1)}`;
 });
 
 const shouldDisplayNameError = computed(() => {
-    return props.error && props.error.key === props.balanceType && props.error?.offendingForms?.some(form => form.balancePropertyType === BALANCE_TYPE_PROPERTY.NAME);
+    return (props.error && props.error.key === props.balanceType && props.error?.offendingForms?.some(form => form.balancePropertyType === BALANCE_TYPE_PROPERTY.NAME)) ? true : false;
 });
 const shouldDisplayAmountError = computed(() => {
-    return props.error && props.error.key === props.balanceType && props.error?.offendingForms?.some(form => form.balancePropertyType === BALANCE_TYPE_PROPERTY.AMOUNT);
+    return (props.error && props.error.key === props.balanceType && props.error?.offendingForms?.some(form => form.balancePropertyType === BALANCE_TYPE_PROPERTY.AMOUNT)) ? true : false;
 
 });
 const displayNameError = computed(() => {
@@ -50,15 +50,15 @@ function handleSubmit() {
             <input v-model="formState.name" :id="`${props.balanceType}-name`" :placeholder="`${displayLabel} name`"
                 type="text" />
             <label :for="`${props.balanceType}-name`">{{ displayLabel }} name</label>
+            <Error :should-display="shouldDisplayNameError">{{ displayNameError }}</Error>
         </span>
-        <Error v-if="shouldDisplayNameError">{{ displayNameError }}</Error>
 
         <span class="form-input">
             <input v-model="formState.amount" :id="`${props.balanceType}-amount`"
                 :placeholder="`${displayLabel} amount`" type="number" />
             <label :for="`${props.balanceType}-amount`">{{ displayLabel }} amount</label>
+            <Error :should-display="shouldDisplayAmountError">{{ displayAmountError }}</Error>
         </span>
-        <Error v-if="shouldDisplayAmountError">{{ displayAmountError }}</Error>
         <button type="submit">Submit</button>
     </form>
 </template>

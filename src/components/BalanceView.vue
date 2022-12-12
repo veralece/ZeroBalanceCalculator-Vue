@@ -24,7 +24,7 @@ const viewState = reactive<IBalance>({
 });
 
 const displayLabel = computed(() => {
-    return `${props.balanceType.toUpperCase()[0]}${props.balanceType.substring(1, props.balanceType.length)}`
+    return `${props.balanceType.charAt(0).toUpperCase()}${props.balanceType.slice(1)}`;
 });
 function toggleEditMode() {
     editMode.value = !editMode.value;
@@ -33,14 +33,11 @@ function toggleEditMode() {
 function toggleDeleteButton() {
     deleteMode.value = !deleteMode.value;
 }
-function handleChange(e: Event) {
-    const event: HTMLInputElement = e.target as HTMLInputElement;
-    if (event.name === BALANCE_TYPE_PROPERTY.AMOUNT)
-        viewState.amount = toNumber(event.value);
-    if (event.name === BALANCE_TYPE_PROPERTY.NAME) {
-        viewState.name = event.value;
-    }
+function handleChange() {
     emit('handleChange', props.balanceType, props.methods.UPDATE, null, viewState);
+}
+function handleEnterKeyUp() {
+    toggleEditMode();
 }
 function handleDelete() {
     emit('handleChange', props.balanceType, props.methods.DELETE, null, viewState);
@@ -62,16 +59,16 @@ function handleDelete() {
 
         <template v-if="!editMode">
             <section class="grid">
-                <h2>{{ props.name }}</h2>
+                <h4>{{ props.name }}</h4>
                 <p>${{ props.amount }}</p>
             </section>
         </template>
 
         <template v-else>
             <section class="grid editable">
-                <input v-model="viewState.name" class="input" @change="handleChange" :id="`${viewState.balanceId}-name`"
+                <input v-model="viewState.name" class="input" @keyup.enter="handleEnterKeyUp" @change="handleChange" :id="`${viewState.balanceId}-name`"
                     name="name" :placeholder="`${displayLabel} name`" type="text" />
-                <input v-model="viewState.amount" class="input" @change="handleChange"
+                <input v-model.number="viewState.amount" class="input" @keyup.enter="handleEnterKeyUp" @change="handleChange"
                     :id="`${viewState.balanceId}-amount`" name="amount" :placeholder="`${displayLabel} amount`"
                     type="number" />
             </section>
@@ -80,12 +77,11 @@ function handleDelete() {
             :checked="deleteMode" @change="toggleDeleteButton" />
         <label class="checkbox delete grid" :for="`${props.balanceId}-toggle-del-checkbox`">
             <svg class="options-checkbox">
-                <circle class="circle" r="2" cx="5" cy="31"></circle>
-                <circle class="circle" r="2" cx="5" cy="41"></circle>
-                <circle class="circle" r="2" cx="5" cy="51"></circle>
+                <circle class="circle" r="2" cx="50%" cy="33%"></circle>
+                <circle class="circle" r="2" cx="50%" cy="49.5%"></circle>
+                <circle class="circle" r="2" cx="50%" cy="66%"></circle>
             </svg>
         </label>
         <button class="delete-button" @click="handleDelete">Delete</button>
-
     </section>
 </template>

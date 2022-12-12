@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { computed, reactive } from 'vue';
 import { IBalancePropertyError, IBalanceState, IBalanceError, IBalance, BALANCE_METHODS, BALANCE_TYPES, INITIAL_BALANCE_ERROR_STATE, INITIAL_BALANCE_STATE, IBalanceForm, BALANCE_TYPE_PROPERTY } from './ZeroBalanceNamespace';
 import BalanceForm from './components/BalanceForm.vue';
 import Balances from './components/Balances.vue';
@@ -8,6 +8,25 @@ import CreateUniqueID from './hooks/uuid';
 const balanceState: IBalanceState = reactive({ ...INITIAL_BALANCE_STATE });
 
 const errorState = reactive<IBalanceError>({ ...INITIAL_BALANCE_ERROR_STATE });
+
+const balanceTotals = computed(() => {
+  let total: number = 0;
+
+  for (const key in balanceState) {
+    if (Object.prototype.hasOwnProperty.call(balanceState, key)) {
+      const element = balanceState[key];
+      if (key === BALANCE_TYPES.INCOME) {
+        element.forEach(b => { if (b.amount) total += b.amount });
+      } else {
+        element.forEach(b => { if (b.amount) total -= b.amount });
+      }
+    }
+  }
+  if (total < 0)
+    return { amount: `($${total})`, negativeBalance: true };
+  else
+    return { amount: `$${total}`, negativeBalance: false };
+});
 
 function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | null, balance: IBalance | null): void {
   errorState.key = INITIAL_BALANCE_ERROR_STATE.key;
@@ -20,7 +39,7 @@ function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | 
     const offendingForms: IBalancePropertyError[] = [];
 
     if (balanceToVerify.amount === null || balanceToVerify.amount < 1) {
-      const errorMessage = "Balance is not a valid amount. It should be at least greater than 1.";
+      const errorMessage = "Balance should be greater than 0.";
       if (balanceForm) {
         offendingForms.push({ propertyErrorMessage: errorMessage, balancePropertyType: BALANCE_TYPE_PROPERTY.AMOUNT });
       }
@@ -86,7 +105,7 @@ function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | 
 
 <template>
   <main>
-    <article>
+    <article class="grid">
       <header>
         <h1 class="center-text">Zero Balance Calculator</h1>
         <p>
@@ -99,9 +118,15 @@ function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | 
         <BalanceForm v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_form`" :balance-type="balanceType"
           :modify-balance="modifyBalance" :method="BALANCE_METHODS.ADD" :error="errorState" />
       </section>
-
-      <Balances v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_balances`" :balance-type="balanceType"
-        @handle-change="modifyBalance" :balances="balanceState[balanceType]" :methods="BALANCE_METHODS" />
+      <section id="balances_container" class="grid">
+        <h2 class="center-text">Balance totals</h2>
+        <Balances v-for="balanceType in BALANCE_TYPES" :key="`${balanceType}_balances`" :balance-type="balanceType"
+          @handle-change="modifyBalance" :balances="balanceState[balanceType]" :methods="BALANCE_METHODS" />
+        <section id="final_balance" class="flex">
+          <h2>Total</h2>
+          <p :class="balanceTotals.negativeBalance ? 'negative-bal' : ''">{{ balanceTotals.amount }}</p>
+        </section>
+      </section>
     </article>
   </main>
 </template>
