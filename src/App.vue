@@ -130,7 +130,7 @@ function modifyBalance(key: string, method: string, balanceForm: IBalanceForm | 
       </section>
     </article>
     <footer class="center-text">
-      <p>Created by <a href="www.javierpenaloza.info">Javier Penaloza</a> &copy; 2022</p>
+      <p>Created by <a href="https://www.javierpenaloza.info">Javier Penaloza</a> &copy; 2022</p>
     </footer>
   </main>
 </template>
